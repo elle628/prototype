@@ -107,6 +107,7 @@ input.fi{height:60px;padding:0 12px}
 .flow-dot.done{background:#003399;color:#fff}
 .flow-dot.ing{background:#1890ff;color:#fff}
 .flow-dot.pending{background:#fff;border:2px solid #ddd;color:#999}
+.flow-dot.reject{background:#ff4d4f;color:#fff}
 .flow-step h4{font-size:18px;font-weight:500;color:#333;margin-bottom:4px}
 .flow-step .time{font-size:17px;color:#999;margin-bottom:8px}
 .flow-opinion{background:#f5f7fa;border-radius:6px;padding:8px 10px;font-size:14px;color:#666}
@@ -136,11 +137,13 @@ input.fi{height:60px;padding:0 12px}
 <div id="app"></div>
 <script>
 // ===== Shared Store =====
-const suppStore = { statuses: {}, editing: {} }
+const suppStore = { statuses: {}, editing: {}, hidden: new Set() }
 function getSuppStatus(id) { return suppStore.statuses[id] || '' }
 function setSuppStatus(id, s) { suppStore.statuses[id] = s }
 function getSuppEditing(id) { return suppStore.editing[id] || false }
 function setSuppEditing(id, v) { suppStore.editing[id] = v }
+function hideSuppTask(id) { suppStore.hidden.add(id) }
+function isSuppTaskHidden(id) { return suppStore.hidden.has(id) }
 
 // ===== SVG Icons =====
 const SVG = {
@@ -204,6 +207,8 @@ function statusColor(s) {
   if (s === '补录中') return '#1890ff'
   if (s === '补录审批中') return '#4080ff'
   if (s === '待补录') return '#ff9f29'
+  if (s === '补录驳回') return '#ff4d4f'
+  if (s === '超时') return '#999'
   return '#999'
 }
 
@@ -312,6 +317,17 @@ route('/approval/:id/task', (p) => `
       <span class="missed">漏检:<b>0</b></span>
     </div>
   </div>
+  <div style="margin:10px 16px 0;background:#fff;border-radius:12px;padding:20px 16px">
+    <p style="font-size:22px;font-weight:600;color:#333;margin-bottom:20px">审批流程记录</p>
+    <div class="flow-line">
+      <div class="line"></div>
+      <div class="flow-step"><div class="flow-dot done">1</div><h4>申请人提交补录</h4><p class="time">2026-05-12 15:20</p><div class="flow-opinion">提交补录申请：施工导致漏检</div></div>
+      <div class="flow-step"><div class="flow-dot done">2</div><h4>审批人审批</h4><p class="time">2026-05-13 09:30</p><div class="flow-opinion">巡检区域已恢复，同意补录</div></div>
+      <div class="flow-step"><div class="flow-dot reject">3</div><h4>审批驳回</h4><p class="time">2026-05-13 10:00</p><div class="flow-opinion">补录原因与实际不符，驳回重新提交</div></div>
+      <div class="flow-step"><div class="flow-dot done">4</div><h4>申请人二次提交</h4><p class="time">2026-05-13 14:00</p><div class="flow-opinion">已修正漏检原因并重新提交</div></div>
+      <div class="flow-step"><div class="flow-dot pending">5</div><h4>未执行节点</h4><p class="time">--未进行的审批环节</p></div>
+    </div>
+  </div>
   <div class="approve-bar">
     <button class="btn-reject" onclick="showApproveModal('reject')">驳回</button>
     <button class="btn-approve" onclick="showApproveModal('approve')">同意</button>
@@ -333,12 +349,6 @@ route('/approval/:id', () => `
     <div class="info-row"><span class="lbl">申请人：</span><span class="val">巡检员-张三</span></div>
     <div class="info-row"><span class="lbl">申请时间：</span><span class="val">2026-05-12 15:20</span></div>
   </div>
-  <div class="section-card">
-    <p style="font-size:22px;font-weight:600;color:#333;margin-bottom:16px">漏检原因</p>
-    <div class="info-row"><span class="lbl">漏检类型：</span><span class="val">施工/不可抗力因素</span></div>
-    <div style="margin-bottom:12px"><span style="font-size:17px;color:#999">详细原因：</span></div>
-    <div style="background:#f5f7fa;border-radius:8px;padding:15px"><span style="font-size:16px;color:#333;line-height:25.6px">现场临时施工，设备区域临时封闭，无法按时到达巡检点，导致漏检。</span></div>
-  </div>
   <div style="margin:10px 16px 0;background:#fff;border-radius:12px 12px 0 0;padding:16px;height:64px;display:flex;align-items:center">
     <span class="group-badge" style="background:#003399">1</span><span style="font-size:18px;font-weight:500;color:#333">分析单元验证</span>
   </div>
@@ -354,15 +364,6 @@ route('/approval/:id', () => `
     <div class="info-row"><span class="lbl">是否正常：</span><span class="val">是</span></div>
     <div class="info-row"><span class="lbl">情况描述：</span><span class="val">现场施工已结束，巡检项正常</span></div>
   </div>
-  <div class="section-card">
-    <p style="font-size:22px;font-weight:600;color:#333;margin-bottom:20px">审批流程记录</p>
-    <div class="flow-line">
-      <div class="line"></div>
-      <div class="flow-step"><div class="flow-dot done">1</div><h4>申请人提交补录</h4><p class="time">2026-05-12 15:20</p><div class="flow-opinion">提交补录申请：施工导致漏检</div></div>
-      <div class="flow-step"><div class="flow-dot ing">2</div><h4>审批人审批中</h4><p class="time">2026-05-12 15:20</p><div class="flow-opinion">审批意见</div></div>
-      <div class="flow-step"><div class="flow-dot pending">3</div><h4>审批人</h4><p class="time">--未进行的审批环节</p></div>
-    </div>
-  </div>
   <div class="approve-bar">
     <button class="btn-reject" onclick="showApproveModal('reject')">驳回</button>
     <button class="btn-approve" onclick="showApproveModal('approve')">同意</button>
@@ -374,13 +375,18 @@ route('/supplementary', () => {
   const baseTasks = [
     { id:1, name:'漏检功能测试', status:'补录审批中', types:'工艺巡检,设备巡检,隐患排查', st:'2026-04-30 15:30:00', et:'--:--:--', stamp:'已完成' },
     { id:2, name:'漏检功能测试', status:'待补录', types:'工艺巡检,设备巡检,隐患排查', st:'2026-04-30 16:30:00', et:'--:--:--', stamp:'已完成' },
+    { id:3, name:'漏检功能测试', status:'补录驳回', types:'工艺巡检,设备巡检,隐患排查', st:'2026-04-30 16:30:00', et:'--:--:--', stamp:'已完成' },
+    // 原型演示用 —— 实际系统无此状态
+    { id:4, name:'漏检功能测试', status:'超时', types:'仅供原型操作使用，实际列表无该状态', st:'2026-04-30 16:30:00', et:'--:--:--', stamp:'已完成' },
   ]
+  // Seed store with initial statuses
+  baseTasks.forEach(t => { if (!getSuppStatus(t.id)) setSuppStatus(t.id, t.status) })
   // Merge store statuses
   const tasks = baseTasks.map(t => {
     const ss = getSuppStatus(t.id)
     if (ss) return { ...t, status: ss }
     return t
-  })
+  }).filter(t => !isSuppTaskHidden(t.id))
   const pendingCount = tasks.filter(t => t.status === '待补录').length
   return `
 <div class="page fade-in" style="min-height:100vh;background:linear-gradient(180deg,#d7e4fc,#f3f5fb)">
@@ -411,7 +417,13 @@ route('/supplementary', () => {
 // --- Supplementary Task (巡检任务 / 巡检任务-补录) ---
 route('/supplementary/:id/task', (p) => {
   const id = parseInt(p.id)
+  const currentStatus = getSuppStatus(id)
+  const isRejected = currentStatus === '补录驳回'
+  const isApproving = currentStatus === '补录审批中'
+  const isTimeout = currentStatus === '超时'
+  const showFlow = isRejected || isApproving
   const isEditing = getSuppEditing(id)
+  const showEditButton = !isEditing && !isApproving
   const items = [
     { id:1, badge:1, bc:'#003399', title:'张蘅测试分析单元', total:3, normal:0, abnormal:0, missed:3 },
     { id:2, badge:2, bc:'#999', title:'测试1111', total:4, normal:0, abnormal:0, missed:4 },
@@ -421,7 +433,7 @@ route('/supplementary/:id/task', (p) => {
   <div class="nav-bar">
     <div class="back" onclick="goBack()">${SVG.back}</div>
     <span class="title">${isEditing?'巡检任务-补录':'巡检任务'}</span>
-    ${!isEditing ? `<div class="right" onclick="startEdit(${id})">补录</div>` : ''}
+    ${showEditButton ? `<div class="right" onclick="startEdit(${id})">补录</div>` : ''}
   </div>
   <div style="background:#fff;margin-top:8px;padding:20px 16px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
@@ -483,6 +495,19 @@ route('/supplementary/:id/task', (p) => {
       <span class="missed">漏检:<b>${it.missed}</b></span>
     </div>
   </div>`).join('')}
+  ${showFlow ? `
+  <div style="margin:10px 16px 0;background:#fff;border-radius:12px;padding:20px 16px">
+    <p style="font-size:22px;font-weight:600;color:#333;margin-bottom:20px">审批流程记录</p>
+    <div class="flow-line">
+      <div class="line"></div>
+      <div class="flow-step"><div class="flow-dot done">1</div><h4>申请人提交补录</h4><p class="time">2026-05-12 15:20</p><div class="flow-opinion">提交补录申请：施工导致漏检</div></div>
+      <div class="flow-step"><div class="flow-dot done">2</div><h4>审批人审批</h4><p class="time">2026-05-13 09:30</p><div class="flow-opinion">巡检区域已恢复，同意补录</div></div>
+      <div class="flow-step"><div class="flow-dot reject">3</div><h4>审批驳回</h4><p class="time">2026-05-13 10:00</p><div class="flow-opinion">补录原因与实际不符，驳回重新提交</div></div>
+      <div class="flow-step"><div class="flow-dot done">4</div><h4>申请人二次提交</h4><p class="time">2026-05-13 14:00</p><div class="flow-opinion">已修正漏检原因并重新提交</div></div>
+      <div class="flow-step"><div class="flow-dot pending">5</div><h4>未执行节点</h4><p class="time">--未进行的审批环节</p></div>
+    </div>
+  </div>
+  ` : ''}
   ${isEditing ? `
   <div class="submit-btn" onclick="submitReason(${id})"><span>提交补录</span></div>
   ` : ''}
@@ -556,7 +581,10 @@ route('/supplementary/:id', (p) => `
 // -- Supplementary Task: Start Edit --
 function startEdit(id) {
   setSuppEditing(id, true)
-  setSuppStatus(id, '补录中')
+  const s = getSuppStatus(id)
+  if (s !== '补录驳回' && s !== '超时') {
+    setSuppStatus(id, '补录中')
+  }
   renderApp()
 }
 
@@ -605,8 +633,25 @@ function onDescInput(id) {
   document.getElementById('task-err-banner-' + id).style.display = 'none'
 }
 
+// -- Timeout Modal --
+function showTimeoutModal() {
+  const mask = document.createElement('div')
+  mask.className = 'modal-mask'
+  mask.onclick = (e) => { if (e.target === mask) mask.remove() }
+  mask.innerHTML = `
+    <div class="modal-content" onclick="event.stopPropagation()" style="width:340px">
+      <h3>提示</h3>
+      <p style="font-size:16px;color:#666;line-height:25.6px;margin-bottom:20px;text-align:left">补录已超期。该任务巡检层级为【车间巡检】，补录有效期为任务结束后【24小时】，当前已超出有效期【3天】，不可提交补录。</p>
+      <div class="modal-btns">
+        <button class="btn-confirm" onclick="this.closest('.modal-mask').remove();hideSuppTask(id);navigate('/supplementary')" style="width:100%">知道了</button>
+      </div>
+    </div>`
+  document.body.appendChild(mask)
+}
+
 // -- Supplementary Task: Submit Reason --
 function submitReason(id) {
+  if (getSuppStatus(id) === '超时') { showTimeoutModal(); return }
   let hasErr = false
   const pickerVal = document.getElementById('picker-val-' + id)
   const reasonDesc = document.getElementById('reason-desc-' + id)
@@ -636,6 +681,8 @@ function submitReason(id) {
 
   if (banner) banner.style.display = 'none'
   setSuppEditing(id, false)
+  const newStatus = getSuppStatus(id) === '补录驳回' ? '补录审批中' : '补录中'
+  setSuppStatus(id, newStatus)
   navigate('/supplementary')
 }
 
