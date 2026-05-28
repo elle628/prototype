@@ -109,6 +109,7 @@ input.fi{height:60px;padding:0 12px}
 .flow-dot.pending{background:#fff;border:2px solid #ddd;color:#999}
 .flow-dot.reject{background:#ff4d4f;color:#fff}
 .flow-step h4{font-size:18px;font-weight:500;color:#333;margin-bottom:4px}
+.flow-step .person{font-size:16px;color:#666;margin-bottom:4px}
 .flow-step .time{font-size:17px;color:#999;margin-bottom:8px}
 .flow-opinion{background:#f5f7fa;border-radius:6px;padding:8px 10px;font-size:14px;color:#666}
 
@@ -289,7 +290,7 @@ route('/approval/:id/task', (p) => `
     <div class="info-row"><span class="lbl">巡检人员岗位类型：</span><span class="val">操作岗位</span></div>
     <div class="info-row"><span class="lbl">执行班组：</span><span class="val"></span></div>
     <div class="info-row"><span class="lbl">任务类型：</span><span class="val">工艺巡检,设备巡检,隐患排查</span></div>
-    <div class="info-row"><span class="lbl">申请人：</span><span class="val">巡检员-张三</span></div>
+    <div class="info-row"><span class="lbl">申请人：</span><span class="val">admin</span></div>
     <div class="info-row"><span class="lbl">申请时间：</span><span class="val">2026-05-12 15:20</span></div>
   </div>
   <div style="background:#fff;margin-top:10px;padding:20px 16px 16px">
@@ -335,7 +336,7 @@ route('/approval/:id', () => `
     <div class="info-row"><span class="lbl">任务名称：</span><span class="val">漏检功能测试</span></div>
     <div class="info-row"><span class="lbl">任务状态：</span><span class="val">已结束</span></div>
     <div class="info-row"><span class="lbl">任务时间：</span><span class="val">2026-04-30 16:30 - 16:55</span></div>
-    <div class="info-row"><span class="lbl">申请人：</span><span class="val">巡检员-张三</span></div>
+    <div class="info-row"><span class="lbl">申请人：</span><span class="val">admin</span></div>
     <div class="info-row"><span class="lbl">申请时间：</span><span class="val">2026-05-12 15:20</span></div>
   </div>
   <div style="margin:10px 16px 0;background:#fff;border-radius:12px 12px 0 0;padding:16px;height:64px;display:flex;align-items:center">
@@ -772,10 +773,10 @@ route('/flow/:id', () => `
   <div style="margin:12px 16px 0;background:#fff;border-radius:12px;padding:20px 16px">
     <div class="flow-line">
       <div class="line"></div>
-      <div class="flow-step"><div class="flow-dot done">1</div><h4>申请人提交补录</h4><p class="time">2026-05-12 15:20</p><div class="flow-opinion">提交补录申请：施工导致漏检</div></div>
-      <div class="flow-step"><div class="flow-dot done">2</div><h4>审批人审批</h4><p class="time">2026-05-13 09:30</p><div class="flow-opinion">巡检区域已恢复，同意补录</div></div>
-      <div class="flow-step"><div class="flow-dot reject">3</div><h4>审批驳回</h4><p class="time">2026-05-13 10:00</p><div class="flow-opinion">补录原因与实际不符，驳回重新提交</div></div>
-      <div class="flow-step"><div class="flow-dot done">4</div><h4>申请人二次提交</h4><p class="time">2026-05-13 14:00</p><div class="flow-opinion">已修正漏检原因并重新提交</div></div>
+      <div class="flow-step"><div class="flow-dot done">1</div><h4>申请人提交补录</h4><p class="person">admin</p><p class="time">2026-05-12 15:20</p><div class="flow-opinion">提交补录申请：施工导致漏检</div></div>
+      <div class="flow-step"><div class="flow-dot done">2</div><h4>审批人审批</h4><p class="person">admin</p><p class="time">2026-05-13 09:30</p><div class="flow-opinion">巡检区域已恢复，同意补录</div></div>
+      <div class="flow-step"><div class="flow-dot reject">3</div><h4>审批驳回</h4><p class="person">admin</p><p class="time">2026-05-13 10:00</p><div class="flow-opinion">补录原因与实际不符，驳回重新提交</div></div>
+      <div class="flow-step"><div class="flow-dot done">4</div><h4>申请人二次提交</h4><p class="person">admin</p><p class="time">2026-05-13 14:00</p><div class="flow-opinion">已修正漏检原因并重新提交</div></div>
       <div class="flow-step"><div class="flow-dot pending">5</div><h4>未执行节点</h4><p class="time">--未进行的审批环节</p></div>
     </div>
   </div>
