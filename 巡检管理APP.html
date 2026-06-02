@@ -290,12 +290,19 @@ route('/approval/:id/task', (p) => `
     <div class="info-row"><span class="lbl">巡检人员岗位类型：</span><span class="val">操作岗位</span></div>
     <div class="info-row"><span class="lbl">执行班组：</span><span class="val"></span></div>
 <div class="info-row"><span class="lbl">任务类型：</span><span class="val">工艺巡检,设备巡检,隐患排查</span></div>
-<div class="info-row"><span class="lbl">巡检周期：</span><span class="val">一日三次</span></div>
+    <div id="task-extra-fields-${p.id}" style="display:none">
+    <div class="info-row"><span class="lbl">巡检周期：</span><span class="val">一日三次</span></div>
     <div class="info-row"><span class="lbl">开始时间：</span><span class="val">2026-04-30 16:30:00</span></div>
     <div class="info-row"><span class="lbl">结束时间：</span><span class="val">2026-04-30 16:55:00</span></div>
     <div class="info-row"><span class="lbl">执行人：</span><span class="val">admin</span></div>
     <div class="info-row"><span class="lbl">同行人：</span><span class="val">李四</span></div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:center;cursor:pointer;padding-top:4px" onclick="toggleTaskDetail(this)">
+    <span style="font-size:15px;color:#003399">展开更多</span>
+    <svg viewBox="0 0 12 12" fill="none" width="12" height="12" style="margin-left:4px;transition:transform .2s"><path d="M3 4.5L6 7.5L9 4.5" stroke="#003399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  
               </div>
+  </div>
   <div style="background:#fff;margin-top:10px;padding:20px 16px 16px">
     <p style="font-size:22px;font-weight:600;color:#333;margin-bottom:20px">漏检原因</p>
     <div style="display:flex;align-items:center;margin-bottom:16px">
@@ -330,30 +337,35 @@ route('/approval/:id/task', (p) => `
 // --- Approval Detail ---
 route('/approval/:id', () => `
 <div class="page fade-in" style="min-height:100vh;background:#f5f7fa;padding-bottom:80px">
-  <div class="nav-bar"><div class="back" onclick="goBack()">${SVG.back}</div><span class="title">补录审批</span></div>
-  <div class="section-card">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <span style="font-size:22px;font-weight:600;color:#333">任务信息</span>
-      <span class="status-tag" style="background:#4080ff">补录审批中</span>
+  <div class="nav-bar"><div class="back" onclick="goBack()">${SVG.back}</div><span class="title">巡检任务</span></div>
+  <div style="margin:10px 16px 0;background:#fff;border-radius:12px 12px 0 0;padding:16px;height:64px;display:flex;align-items:center;cursor:pointer" onclick="toggleApprovalGroup(1)">
+    <span class="group-badge" style="background:#003399">1</span>
+    <img id="app-chevron1" style="width:14px;height:14px;margin-right:6px;flex-shrink:0;transform:rotate(180deg);transition:transform .2s" src="data:image/svg+xml,${encodeURIComponent('<svg viewBox="0 0 14 14" fill="none"><path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="#666" stroke-width="1.17"/></svg>')}">
+    <span style="font-size:18px;font-weight:500;color:#333;flex:1">分析单元验证</span>
+  </div>
+  <div id="app-group1">
+    <div style="background:#fff;margin:0 16px;padding:18px 16px 20px">
+      <p style="font-size:18px;color:#111;line-height:27px;margin-bottom:16px">1.隐患排查(工程技术/工艺控制)</p>
+      <div class="form-row"><span class="flbl">传感器:</span><span class="fval">--</span></div>
+      <div class="form-row"><span class="flbl">检查标准:</span><span class="fval">管控措施描述2</span></div>
+      <div class="form-row"><span class="flbl">检查方法:</span><span class="fval">目测</span></div>
+      <div class="radio-wrap"><span class="rlbl">是否正常:</span><div class="radio-group"><div class="radio-item"><span class="radio-dot on"><span class="inner"></span></span><span class="rtext">是</span></div><div class="radio-item"><span class="radio-dot off"></span><span class="rtext">否</span></div></div></div>
+      <div class="form-label"><div class="flbl-wrap"><span class="flbl">情况描述:</span></div><div style="flex:1;position:relative"><textarea class="fi" readonly style="height:60px">设备运行正常，无异常情况</textarea><span class="char-count">12/500</span></div></div>
+      <div class="form-label"><div class="flbl-wrap"><span class="flbl">备注:</span></div><div style="flex:1;position:relative"><textarea class="fi" readonly style="height:60px"></textarea><span class="char-count">0/500</span></div></div>
+      <div class="upload-area" style="cursor:default">${SVG.camera}<span>上传照片</span></div>
+      <div class="history-link">历史记录 &gt;</div>
     </div>
-    <div class="info-row"><span class="lbl">任务名称：</span><span class="val">漏检功能测试</span></div>
-    <div class="info-row"><span class="lbl">任务状态：</span><span class="val">已结束</span></div>
-    <div class="info-row"><span class="lbl">任务时间：</span><span class="val">2026-04-30 16:30 - 16:55</span></div>
-          </div>
-  <div style="margin:10px 16px 0;background:#fff;border-radius:12px 12px 0 0;padding:16px;height:64px;display:flex;align-items:center">
-    <span class="group-badge" style="background:#003399">1</span><span style="font-size:18px;font-weight:500;color:#333">分析单元验证</span>
-  </div>
-  <div style="background:#fff;margin:0 16px;padding:18px 16px 20px">
-    <p style="font-size:17px;color:#111;margin-bottom:16px">1.隐患排查(工程技术/工艺控制)</p>
-    <div class="info-row"><span class="lbl">检查标准：</span><span class="val">管控措施描述2</span></div>
-    <div class="info-row"><span class="lbl">是否正常：</span><span class="val">是</span></div>
-    <div class="info-row"><span class="lbl">情况描述：</span><span class="val">设备运行正常，无异常情况</span></div>
-  </div>
-  <div style="background:#fff;margin:8px 16px 0;padding:18px 16px 20px;border-radius:0 0 12px 12px">
-    <p style="font-size:17px;color:#111;margin-bottom:16px">2.进行隐患排查(工程技术/工艺控制)</p>
-    <div class="info-row"><span class="lbl">检查标准：</span><span class="val">管控措施描述1</span></div>
-    <div class="info-row"><span class="lbl">是否正常：</span><span class="val">是</span></div>
-    <div class="info-row"><span class="lbl">情况描述：</span><span class="val">现场施工已结束，巡检项正常</span></div>
+    <div style="background:#fff;margin:8px 16px 0;padding:18px 16px 20px;border-radius:0 0 12px 12px">
+      <p style="font-size:18px;color:#111;line-height:27px;margin-bottom:16px">2.进行隐患排查(工程技术/工艺控制)</p>
+      <div class="form-row"><span class="flbl">传感器:</span><span class="fval">--</span></div>
+      <div class="form-row"><span class="flbl">检查标准:</span><span class="fval">管控措施描述1</span></div>
+      <div class="form-row"><span class="flbl">检查方法:</span><span class="fval">目测</span></div>
+      <div class="radio-wrap"><span class="rlbl">是否正常:</span><div class="radio-group"><div class="radio-item"><span class="radio-dot on"><span class="inner"></span></span><span class="rtext">是</span></div><div class="radio-item"><span class="radio-dot off"></span><span class="rtext">否</span></div></div></div>
+      <div class="form-label"><div class="flbl-wrap"><span class="flbl">情况描述:</span></div><div style="flex:1;position:relative"><textarea class="fi" readonly style="height:60px">现场施工已结束，巡检项正常</textarea><span class="char-count">12/500</span></div></div>
+      <div class="form-label"><div class="flbl-wrap"><span class="flbl">备注:</span></div><div style="flex:1;position:relative"><textarea class="fi" readonly style="height:60px"></textarea><span class="char-count">0/500</span></div></div>
+      <div class="upload-area" style="cursor:default">${SVG.camera}<span>上传照片</span></div>
+      <div class="history-link">历史记录 &gt;</div>
+    </div>
   </div>
   <div class="approve-bar">
     <button class="btn-reject" onclick="showApproveModal('reject')">驳回</button>
@@ -437,12 +449,19 @@ route('/supplementary/:id/task', (p) => {
     <div class="info-row"><span class="lbl">巡检人员岗位类型：</span><span class="val">操作岗位</span></div>
     <div class="info-row"><span class="lbl">执行班组：</span><span class="val"></span></div>
 <div class="info-row"><span class="lbl">任务类型：</span><span class="val">工艺巡检,设备巡检,隐患排查</span></div>
-<div class="info-row"><span class="lbl">巡检周期：</span><span class="val">一日三次</span></div>
+    <div id="task-extra-fields-${id}" style="display:none">
+    <div class="info-row"><span class="lbl">巡检周期：</span><span class="val">一日三次</span></div>
     <div class="info-row"><span class="lbl">开始时间：</span><span class="val">2026-04-30 16:30:00</span></div>
     <div class="info-row"><span class="lbl">结束时间：</span><span class="val">2026-04-30 16:55:00</span></div>
     <div class="info-row"><span class="lbl">执行人：</span><span class="val">admin</span></div>
     <div class="info-row"><span class="lbl">同行人：</span><span class="val">李四</span></div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:center;cursor:pointer;padding-top:4px" onclick="toggleTaskDetail(this)">
+    <span style="font-size:15px;color:#003399">展开更多</span>
+    <svg viewBox="0 0 12 12" fill="none" width="12" height="12" style="margin-left:4px;transition:transform .2s"><path d="M3 4.5L6 7.5L9 4.5" stroke="#003399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  
       </div>
+	  </div>
   <div id="task-err-banner-${id}" class="err-banner" style="display:none">请完善漏检原因必填项后提交</div>
   <div style="background:#fff;margin-top:10px;padding:20px 16px 16px" id="reason-card-${id}">
     <p style="font-size:22px;font-weight:600;color:#333;margin-bottom:20px">漏检原因</p>
@@ -502,22 +521,6 @@ route('/supplementary/:id/task', (p) => {
 route('/supplementary/:id', (p) => `
 <div class="page fade-in" style="min-height:100vh;background:#f5f7fa;padding-bottom:80px">
   <div class="nav-bar"><div class="back" onclick="goBack()">${SVG.back}</div><span class="title">巡检任务-补录</span></div>
-  <div style="background:#fff;margin-top:12px;padding:20px 16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <span style="font-size:22px;font-weight:600;color:#333">漏检功能测试</span>
-      <span class="status-green">已结束</span>
-    </div>
-    <div style="background:#f0f2f5;border-radius:4px;padding:2px 10px;margin-bottom:20px"><span style="font-size:17px;color:#999">2026-04-30 16:30:00 - 2026-04-30 16:55:00</span></div>
-    <div class="info-row"><span class="lbl">所属部门：</span><span class="val">智巡测试</span></div>
-    <div class="info-row"><span class="lbl">巡检人员岗位类型：</span><span class="val">操作岗位</span></div>
-    <div class="info-row"><span class="lbl">执行班组：</span><span class="val"></span></div>
-<div class="info-row"><span class="lbl">任务类型：</span><span class="val">工艺巡检,设备巡检,隐患排查</span></div>
-<div class="info-row"><span class="lbl">巡检周期：</span><span class="val">一日三次</span></div>
-    <div class="info-row"><span class="lbl">开始时间：</span><span class="val">2026-04-30 16:30:00</span></div>
-    <div class="info-row"><span class="lbl">结束时间：</span><span class="val">2026-04-30 16:55:00</span></div>
-    <div class="info-row"><span class="lbl">执行人：</span><span class="val">admin</span></div>
-    <div class="info-row"><span class="lbl">同行人：</span><span class="val">李四</span></div>
-      </div>
   <div id="detail-err-banner" class="err-banner" style="display:none">请完善以下必填项后提交</div>
   <div class="group-header" onclick="toggleGroup(1)">
     <span class="group-badge" style="background:#003399">1</span>
@@ -792,6 +795,28 @@ route('/flow/:id', () => `
     </div>
   </div>
 </div>`)
+
+// -- Approval Detail: Group Toggle --
+function toggleApprovalGroup(id) {
+  const g = document.getElementById('app-group' + id)
+  const c = document.getElementById('app-chevron' + id)
+  if (g.style.display === 'none') { g.style.display = 'block'; c.style.transform = 'rotate(180deg)' }
+  else { g.style.display = 'none'; c.style.transform = 'rotate(0deg)' }
+}
+
+// -- Task Info Card: toggle extra fields --
+function toggleTaskDetail(el) {
+  const card = el.closest('[style*="background:#fff"]') || el.parentElement
+  const extra = card.querySelector('[id^="task-extra-fields-"]')
+  const span = el.querySelector('span')
+  const svg = el.querySelector('svg')
+  if (extra) {
+    const hidden = extra.style.display === 'none'
+    extra.style.display = hidden ? 'block' : 'none'
+    span.textContent = hidden ? '收起' : '展开更多'
+    svg.style.transform = hidden ? 'rotate(180deg)' : 'rotate(0deg)'
+  }
+}
 
 // ===== Boot =====
 renderApp()
