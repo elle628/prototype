@@ -252,7 +252,7 @@ route('/', () => `
 
 // --- Pending Approval List ---
 route('/pending-approval', () => {
-  const tasks = [{ id:1, name:'漏检功能测试', status:'补录审批中', sc:'#4080ff', types:'工艺巡检,设备巡检,隐患排查', st:'2026-04-30 16:30:00', et:'--:--:--', stamp:'已完成' }]
+  const tasks = [{ id:1, name:'漏检功能测试', status:'补录审批中', sc:'#4080ff', types:'工艺巡检,设备巡检,隐患排查', st:'2026-04-30 16:30:00', et:'--:--:--', stamp:'已完成' }]; tasks.forEach(t => { if (!getSuppStatus(t.id)) setSuppStatus(t.id, t.status) })
   return `
 <div class="page fade-in" style="min-height:100vh;background:linear-gradient(180deg,#d7e4fc,#f3f5fb)">
   <div class="nav-bar"><div class="back" onclick="goBack()">${SVG.back}</div><span class="title">待我审批</span></div>
@@ -283,7 +283,7 @@ route('/approval/:id/task', (p) => `
   <div style="background:#fff;margin-top:8px;padding:20px 16px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <span style="font-size:22px;font-weight:600;color:#333">漏检功能测试</span>
-      <span class="status-green">已结束</span>
+      <span id='supp-status-${typeof id!=="undefined"?id:p.id}' style='font-size:17px;color:#fff;border-radius:4px;padding:2px 8px;background:#85b850'>已结束</span>
     </div>
     <div style="background:#f0f2f5;border-radius:4px;padding:2px 10px;margin-bottom:20px"><span style="font-size:17px;color:#999">2026-04-30 16:30:00 - 2026-04-30 16:55:00</span></div>
     <div class="info-row"><span class="lbl">所属部门：</span><span class="val">智巡测试</span></div>
@@ -442,7 +442,7 @@ route('/supplementary/:id/task', (p) => {
   <div style="background:#fff;margin-top:8px;padding:20px 16px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <span style="font-size:22px;font-weight:600;color:#333">漏检功能测试</span>
-      <span class="status-green">已结束</span>
+      <span id='supp-status-${typeof id!=="undefined"?id:p.id}' style='font-size:17px;color:#fff;border-radius:4px;padding:2px 8px;background:#85b850'>已结束</span>
     </div>
     <div style="background:#f0f2f5;border-radius:4px;padding:2px 10px;margin-bottom:20px"><span style="font-size:17px;color:#999">2026-04-30 16:30:00 - 2026-04-30 16:55:00</span></div>
     <div class="info-row"><span class="lbl">所属部门：</span><span class="val">智巡测试</span></div>
@@ -817,6 +817,25 @@ function toggleTaskDetail(el) {
     svg.style.transform = hidden ? 'rotate(180deg)' : 'rotate(0deg)'
   }
 }
+
+// -- Update task status badges --
+function updateStatusBadges() {
+  setTimeout(() => {
+    document.querySelectorAll('[id^="supp-status-"]').forEach(el => {
+      const taskId = parseInt(el.id.replace('supp-status-', ''))
+      const s = getSuppStatus(taskId)
+      if (s) {
+        const colors = {'补录中':'#1890ff','补录审批中':'#4080ff','待补录':'#ff9f29','补录驳回':'#ff4d4f','超时':'#999'}
+        el.style.background = colors[s] || '#85b850'
+        el.textContent = s
+      }
+    })
+  }, 50)
+}
+
+// Override renderApp to also update statuses
+const _origRenderApp = renderApp
+renderApp = function() { _origRenderApp(); updateStatusBadges() }
 
 // ===== Boot =====
 renderApp()
